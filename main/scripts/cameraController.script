@@ -1,0 +1,30 @@
+local function follow(self)
+	local playerPos = go.get_position("mask_dude")
+	self.targetPos.x = playerPos.x - 360
+	self.targetPos.y = playerPos.y - 240
+	if self.targetPos.x < 0 then 
+		self.targetPos.x = 0 
+	end
+	if self.targetPos.y < 0 then
+		self.targetPos.y = 0 
+	end
+	if self.targetPos.y > 480 then
+		self.targetPos.y = 480
+	end
+
+	go.set_position(self.targetPos)
+end
+
+function init(self)
+	msg.post("#camera", "acquire_camera_focus")
+	msg.post("@render:", "use_fixed_fit_projection", {near = -1, far = 1})
+	self.targetPos = vmath.vector3()
+end
+
+function final( self )
+	msg.post("#camera", "release_camera_focus")
+end
+
+function update(self, dt)
+	follow(self)
+end

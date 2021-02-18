@@ -1,0 +1,109 @@
+local animator = require 'modules.animator'
+
+local function game_over()
+	local pos = go.get_position()
+	if pos.y < 0 then
+		msg.post("main:/loader#loader","game_over")
+	end
+end
+
+local function play_animation(self)
+	animator.jump_count = self.jump_count
+	animator.grounded = self.grounded
+	animator.isRight = self.isRight
+
+	local anim = animator.play_anim("mask_dude", self.velocity)
+	if anim ~= self.current_anim then
+		self.current_anim = anim
+		sprite.set_hflip("#sprite", animator.h_flip)
+		msg.post("#sprite", "play_animation", {id = anim})
+	end
+end
+
+local function move(self)
+	self.velocity = go.get("#body", "linear_velocity")
+	self.velocity.x = self.input.x*self.speed
+	go.set("#body", "linear_velocity", self.velocity)
+end
+
+local function jump(self)
+	if self.jump_count > 0 then 
+		self.velocity.y = self.input.y*175
+		go.set("#body", "linear_velocity", self.velocity)
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	self.speed = 75
+	self.current_anim = nil
+	self.grounded = nil 
+	self.jump_count = nil
+	self.velocity = vmath.vector3()
+	self.input = vmath.vector3()
+	self.isRight = nil
+
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function update(self, dt)
+	move(self)
+	play_animation(self)	
+	game_over()
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("trigger_response") then
+		if message.enter then
+			if message.other_group == hash("grounds") then
+				self.jump_count = 2
+				self.grounded = true
+			end
+		else
+			if message.other_group == hash("grounds") then
+				self.grounded = false
+			end
+		end
+	end
+	if message_id == hash("contact_response") then
+		if message.other_group == hash("grounds") then
+			local myPos = go.get_position()
+			if myPos.x < message.other_position.x then
+				self.isRight = false
+			else
+				self.isRight = true
+			end
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("right") then
+		if action.pressed then
+			self.input.x = 1
+		elseif action.released then
+			self.input.x = 0 
+		end
+	elseif action_id == hash("left") then
+		if action.pressed then
+			self.input.x = -1
+		elseif action.released then
+			self.input.x = 0 
+		end
+	elseif action_id == hash("jump") then 
+		if action.pressed then 
+			self.input.y = 1 
+			jump(self)
+		elseif action.released then 
+			self.input.y = 0 
+			if self.jump_count > 0 then
+				self.jump_count = self.jump_count - 1
+			end
+		end
+	end
+end
+

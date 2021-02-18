@@ -1,0 +1,22 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 720
+height = 480
+update_frequency = 60
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = Adventure Pixel
+dependencies = 
+
+[physics]
+scale = 0.03
+gravity_y = -300.0
+

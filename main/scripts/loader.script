@@ -1,0 +1,34 @@
+local current_proxy = nil
+
+local function load_level(name)
+	if name ~= current_proxy then
+	msg.post(current_proxy,"unload")
+	msg.post(name,"load")
+	end
+end
+
+function init(self)
+	msg.post(".","acquire_input_focus")
+	msg.post("#main_menu_proxy", "load")
+end
+
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("proxy_loaded") then
+		current_proxy = sender
+		msg.post(sender, "init")
+		msg.post(sender, "enable")
+	elseif message_id == hash("proxy_unloaded") then
+	elseif message_id == hash("start_game") then
+		load_level("#level1_proxy")
+	elseif message_id == hash("game_over") then
+		load_level("#main_menu_proxy")
+	elseif message_id == hash("exit_game") then
+		msg.post("@system:", "exit", {code = 0})
+	end
+
+end
