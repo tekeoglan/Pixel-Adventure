@@ -1,0 +1,7 @@
+{
+    "Lua.telemetry.enable": false,
+    "Lua.diagnostics.disable": [
+        "lowercase-global",
+        "undefined-global"
+    ]
+}

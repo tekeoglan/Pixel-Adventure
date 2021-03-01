@@ -20,8 +20,8 @@ animations {
     image: "/assets/enemies/chicken/hit/tile004.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_PINGPONG
-  fps: 16
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 8
   flip_horizontal: 0
   flip_vertical: 0
 }

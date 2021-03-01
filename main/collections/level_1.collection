@@ -3,8 +3,8 @@ instances {
   id: "mask_dude"
   prototype: "/main/objects/mask_dude.go"
   position {
-    x: 31.0
-    y: 128.0
+    x: 767.0
+    y: 227.0
     z: 1.0
   }
   rotation {
@@ -43,7 +43,7 @@ instances {
   id: "chicken"
   prototype: "/main/objects/chicken.go"
   position {
-    x: 939.0
+    x: 849.0
     y: 224.0
     z: 1.0
   }
@@ -52,6 +52,19 @@ instances {
     y: 0.0
     z: 0.0
     w: 1.0
+  }
+  component_properties {
+    id: "enemyController"
+    properties {
+      id: "point1"
+      value: "849.0, 224.0, 1.0"
+      type: PROPERTY_TYPE_VECTOR3
+    }
+    properties {
+      id: "point2"
+      value: "1199.0, 224.0, 1.0"
+      type: PROPERTY_TYPE_VECTOR3
+    }
   }
   scale3 {
     x: 1.0
