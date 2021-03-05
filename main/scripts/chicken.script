@@ -5,12 +5,12 @@ go.property("point2", vmath.vector3())
 go.property("speed", 50)
 
 function init(self)
-	ai.init()
+	ai.init(self)
 end
 
 
 function update(self, dt)
-	ai.update(dt)
+	ai.update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)

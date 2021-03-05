@@ -21,9 +21,9 @@ function animator.play_anim(name, direction)
             return hash(name .. "_jump")
         elseif direction.y < 0 and animator.grounded then 
             if animator.isRight then
-                animator.h_flip = false
-            else
                 animator.h_flip = true
+            else
+                animator.h_flip = false
             end
             return hash(name .. "_wall_jump")
         elseif direction.y < 0 and not animator.grounded then
