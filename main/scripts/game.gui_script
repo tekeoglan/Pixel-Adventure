@@ -1,0 +1,9 @@
+function init(self)
+	self.health = gui.get_node("health")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("health_lost") then 
+		gui.set_text(self.health, "HEALTH: " .. message.health) 
+	end
+end

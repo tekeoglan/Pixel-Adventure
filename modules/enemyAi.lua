@@ -52,7 +52,6 @@ local function pathFinding(self,dt)
         local move =  self.pos + self.direction*self.speed*dt 
         go.set_position(move)
     else
-        print("reached the checkpoint")
         self.direction = vmath.vector3(0,0,self.pos.z)
         if self.points[self.checkPoint + 1] ~= nil then
             --print("incremented the checkpoint")
@@ -75,7 +74,6 @@ function enemyAi:init()
     self.moving = true
     self.animation = "chicken_idle"
     self.url = msg.url("#")
-    print(self.url)
     getPoints(self)
 end
 
