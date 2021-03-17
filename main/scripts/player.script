@@ -1,18 +1,5 @@
 local animator = require 'modules.animator'
 
-local function game_over(self)
-	local pos = go.get_position()
-	local gameOver = false
-	if pos.y < 0 then
-		gameOver = true
-	elseif self.health == 0 then
-		gameOver = true
-	end
-	if gameOver then
-    msg.post("main:/loader#loader","game_over")
-	end
-end
-
 local function hittingTheEnemy(self,dt)
 	if self.enemyContactTimer >= 0 then
 		self.immunity = true
@@ -36,12 +23,18 @@ local function play_animation(self)
 end
 
 local function move(self)
+	if not self.moving then
+		return
+	end
 	self.velocity = go.get("#body", "linear_velocity")
 	self.velocity.x = self.input.x*self.speed
 	go.set("#body", "linear_velocity", self.velocity)
 end
 
 local function jump(self)
+	if not self.moving then
+		return
+	end
 	if self.jump_count > 0 then 
 		self.velocity.y = self.input.y*175
 		go.set("#body", "linear_velocity", self.velocity)
@@ -61,6 +54,7 @@ function init(self)
 	self.enemyContactTimer = -1
 	self.immunity = false
 	self.hittingEnemy = false
+	self.moving = true
 
 end
 
@@ -72,7 +66,6 @@ function update(self, dt)
 	move(self)
 	play_animation(self)	
 	hittingTheEnemy(self,dt)
-	game_over(self)
 end
 
 function on_message(self, message_id, message, sender)
@@ -90,6 +83,7 @@ function on_message(self, message_id, message, sender)
 				self.enemyContactTimer = 2
 				self.health = self.health - 1
 				msg.post("gui", "health_lost", {health = self.health})
+				msg.post("game_manager", "player_health_lost", {health = self.health})
 			end
 		end
 	end
@@ -110,6 +104,17 @@ function on_message(self, message_id, message, sender)
 			if message.other_group == hash("enemy_head") then
 				self.hittingEnemy = false
 			end
+		end
+	end
+	if message_id == hash("game_over") then
+		self.moving = false
+		msg.post("#sprite", "play_animation", {id = hash("player_desappering")})
+	end
+	if message_id == hash("animation_done") then
+		if message.id == hash("player_desappering") then
+			msg.post("#body", "disable")
+			msg.post("#trigger", "disable")
+	   		msg.post("game_manager#manager","game_over")
 		end
 	end
 end

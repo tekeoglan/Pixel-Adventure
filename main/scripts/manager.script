@@ -1,0 +1,39 @@
+local gameStates = {start = 1, running = 2, endGame = 3}
+local currentState = nil
+local playerPos = nil
+local playerHealth = 3 
+local isGameOver = false
+
+local function gameOver()
+	if isGameOver then
+		return
+	end
+
+	if playerPos.y < 0 then
+		isGameOver = true
+		msg.post("main:/loader#loader", "game_over")
+	end
+	if playerHealth <= 0 then
+		isGameOver = true
+		msg.post("mask_dude", "game_over")
+	end
+end
+
+function init(self)
+	currentState = gameStates.start
+end
+
+function update(self)
+	playerPos = go.get_position("mask_dude")
+	gameOver()
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("player_health_lost") then
+		playerHealth = message.health	
+	end
+	if message_id == hash("game_over") then
+		print("manager game over")
+		msg.post("main:/loader#loader", "game_over")
+	end
+end

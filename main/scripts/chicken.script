@@ -5,6 +5,7 @@ go.property("point2", vmath.vector3())
 go.property("speed", 50)
 
 function init(self)
+	self.name = "chicken"
 	ai.init(self)
 end
 

@@ -26,9 +26,9 @@ local function Animate(self)
         else
             sprite.set_hflip("#sprite", true)
         end
-        return "chicken_run"
+        return self.name .. "_run"
     else
-        return "chicken_idle"
+        return self.name .. "_idle"
     end
 end
 
@@ -53,12 +53,15 @@ local function pathFinding(self,dt)
         go.set_position(move)
     else
         self.direction = vmath.vector3(0,0,self.pos.z)
-        if self.points[self.checkPoint + 1] ~= nil then
-            --print("incremented the checkpoint")
+        if self.points[self.checkPoint + 1] ~= nil and self.movingForward then
             self.checkPoint = self.checkPoint + 1
         else
-            --print("checkpoint not exist")
-            self.checkPoint = self.checkPoint - 1
+            self.movingForward = false
+            if self.points[self.checkPoint - 1] ~= nil then
+                self.checkPoint = self.checkPoint - 1
+            else
+                self.movingForward = true
+            end
         end
         self.destination = self.points[self.checkPoint]
     end
@@ -72,8 +75,9 @@ function enemyAi:init()
     self.checkPoint = 1
     self.destination = go.get("#", "point1")
     self.moving = true
-    self.animation = "chicken_idle"
+    self.animation = self.name .. "_idle"
     self.url = msg.url("#")
+    self.movingForward = true
     getPoints(self)
 end
 
@@ -86,7 +90,8 @@ function enemyAi.onMessage(self,message_id,message,sender)
    if message_id == hash("trigger_response") then 
         if message.other_group == hash("player") then
             self.moving = false
-            msg.post("#sprite", "play_animation", {id = hash("chicken_hit")})
+            msg.post("#body", "disable")
+            msg.post("#sprite", "play_animation", {id = hash(self.name .. "_hit")})
         end
    end
    if message_id == hash("animation_done") then
